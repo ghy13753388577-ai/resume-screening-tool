@@ -7,8 +7,14 @@ from pathlib import Path
 import PyPDF2
 from docx import Document
 from PIL import Image
-import cv2
-import numpy as np
+
+try:
+    import cv2
+    import numpy as np
+except ImportError:
+    cv2 = None
+    np = None
+
 try:
     import pytesseract
 except ImportError:
@@ -104,8 +110,8 @@ class ResumeParser:
     def _extract_image(self, content: bytes) -> str:
         """从图片提取文本（OCR）"""
         text = ""
-        if not pytesseract:
-            print("OCR功能未启用，请安装tesseract-ocr")
+        if not pytesseract or not cv2 or not np:
+            print("OCR功能未启用，请安装tesseract-ocr, opencv-python和numpy")
             return text
         
         try:
